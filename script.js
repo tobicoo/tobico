@@ -69,46 +69,54 @@ async function uploadFile() {
         return;
     }
 
-    const formData = new FormData();
-    formData.append('file', file);
+    const filename = `${Date.now()}_${file.name}`;
+    const uploadInfo = document.getElementById('upload-time');
 
     try {
         uploadButton.disabled = true;
         uploadButton.textContent = 'Đang tải lên...';
-
         const start = performance.now();
 
-        const response = await fetch('https://tobicoo-dev-azure.up.railway.app/upload', {
-            method: 'POST',
-            body: formData
+        // 🔑 Lấy SAS URL từ backend
+        const sasRes = await fetch(`https://tobicoo-dev-azure.up.railway.app/generate-sas?filename=${encodeURIComponent(filename)}`);
+        const { sasUrl } = await sasRes.json();
+
+        // 🚀 Upload ảnh trực tiếp qua SAS
+        const response = await fetch(sasUrl, {
+            method: 'PUT',
+            headers: {
+                "x-ms-blob-type": "BlockBlob",
+                "Content-Type": file.type
+            },
+            body: file
         });
 
-        const result = await response.json();
-
         if (!response.ok) {
-            throw new Error(result.error || 'Upload thất bại!');
+            throw new Error('Upload thất bại qua SAS!');
         }
 
         const end = performance.now();
         const duration = ((end - start) / 1000).toFixed(2);
         const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
 
+        const publicUrl = sasUrl.split('?')[0];
+        document.getElementById('direct-link').value = publicUrl;
+        document.getElementById('link-container').style.display = 'block';
+
         if (uploadInfo) {
             uploadInfo.textContent = `📁 Dung lượng: ${sizeMB} MB | ⏱️ Thời gian tải: ${duration} giây`;
             uploadInfo.style.color = 'green';
         }
 
-        document.getElementById('direct-link').value = result.url;
-        document.getElementById('link-container').style.display = 'block';
+        console.log('✅ Upload thành công:', publicUrl);
 
     } catch (error) {
-        console.error('Lỗi:', error);
-        alert('Tải lên thất bại!');
+        console.error('🔴 Lỗi upload:', error);
+        alert('Tải ảnh thất bại: ' + error.message);
     } finally {
         uploadButton.disabled = false;
         uploadButton.textContent = 'Chọn hình ảnh';
     }
-}
 
 if (dropZone) {
     dropZone.addEventListener('dragover', (e) => {
