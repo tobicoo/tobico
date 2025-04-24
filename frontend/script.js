@@ -78,7 +78,7 @@ async function uploadFile() {
 
         const start = performance.now();
 
-        const response = await fetch('https://tobicoo-dev-azure.up.railway.app/upload', {
+        const response = await fetch('https://tobico.railway.internal/upload', {
             method: 'POST',
             body: formData
         });
@@ -161,7 +161,7 @@ if (copyBtn) {
 // ================= THƯ VIỆN ẢNH & XOÁ ẢNH =================
 async function loadGallery() {
     try {
-        const response = await fetch('https://tobicoo-dev-azure.up.railway.app/images');
+        const response = await fetch('https://tobico.railway.internal/images');
         const data = await response.json();
         const images = data.images || data;
 
@@ -284,7 +284,7 @@ function openImageModal(url) {
 async function deleteImage(imageUrl, imageElement) {
     try {
         const filename = imageUrl.split('/').pop();
-        const response = await fetch('https://tobicoo-dev-azure.up.railway.app/delete', {
+        const response = await fetch('https://tobico.railway.internal/delete', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ filename })
