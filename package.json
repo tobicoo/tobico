@@ -1,14 +1,15 @@
 {
   "name": "azure",
   "version": "1.0.0",
-  "main": "script.js",
+  "description": "",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "@azure/storage-blob": "^12.26.0",
     "cors": "^2.8.5",
