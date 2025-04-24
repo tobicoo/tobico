@@ -117,6 +117,7 @@ async function uploadFile() {
         uploadButton.disabled = false;
         uploadButton.textContent = 'Chọn hình ảnh';
     }
+}
 
 if (dropZone) {
     dropZone.addEventListener('dragover', (e) => {
